@@ -9,10 +9,15 @@ from typing import List, Dict, Any, Optional
 from langchain.docstore.document import Document
 try:
     from langchain_community.vectorstores import FAISS
-    from langchain.embeddings import HuggingFaceEmbeddings
     FAISS_AVAILABLE = True
 except ImportError:
     FAISS_AVAILABLE = False
+
+try:
+    from langchain.embeddings import HuggingFaceEmbeddings
+    EMBEDDINGS_AVAILABLE = True
+except ImportError:
+    EMBEDDINGS_AVAILABLE = False
 
 # Import SimpleVectorStore regardless of FAISS availability for fallback
 try:
@@ -35,8 +40,8 @@ class VectorStoreManager:
         self.embedding_model_name = embedding_model
         self.persist_directory = persist_directory
 
-        global FAISS_AVAILABLE
-        if FAISS_AVAILABLE:
+        global FAISS_AVAILABLE, EMBEDDINGS_AVAILABLE
+        if FAISS_AVAILABLE and EMBEDDINGS_AVAILABLE:
             try:
                 self.embeddings = HuggingFaceEmbeddings(
                     model_name=embedding_model,

@@ -7,9 +7,9 @@ langgraph>=0.0.26
 langchain-community>=0.0.10
 langchain-google-genai>=0.0.6
 
-# Vector Store and Embeddings
-faiss-cpu>=1.7.4
-sentence-transformers>=2.2.0
+# Vector Store and Embeddings (optimized for cloud)
+# faiss-cpu>=1.7.4  # Commented out - may cause issues on Python 3.13
+# sentence-transformers>=2.2.0,<3.0.0  # Commented out - heavy dependency, app works without it
 
 # Document Processing
 pypdf>=3.17.0
@@ -18,18 +18,13 @@ pypdf>=3.17.0
 python-dotenv>=1.0.0
 typing-extensions>=4.9.0
 
-# Data Processing
+# Data Processing (essential only)
 numpy>=1.24.0
-pandas>=2.1.0
 
 # Additional dependencies for cloud deployment
 pydantic>=2.0.0
 requests>=2.31.0
 urllib3>=2.0.0
-
-# Optional: For better performance on cloud
-torch>=2.0.0,<2.3.0
-transformers>=4.30.0
 
 # Security and validation
 cryptography>=41.0.0
