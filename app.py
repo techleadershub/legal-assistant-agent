@@ -30,126 +30,301 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better styling with improved contrast
+# Premium CSS for Agentic AI Interface
 st.markdown("""
 <style>
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Global Styles */
+* {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Main Container */
+.main .block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+    max-width: 1200px;
+}
+
+/* Premium Header */
 .main-header {
-    font-size: 2.5rem;
-    font-weight: bold;
+    font-size: 3rem;
+    font-weight: 700;
     text-align: center;
-    margin-bottom: 2rem;
-    color: #1e3a8a;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    letter-spacing: -0.02em;
 }
 
+.main-subtitle {
+    font-size: 1.2rem;
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #64748b;
+    opacity: 0.9;
+}
+
+/* Premium Section Headers */
 .section-header {
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-    color: #1f2937;
-    border-bottom: 2px solid #e5e7eb;
-    padding-bottom: 0.5rem;
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-top: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #1e293b;
+    position: relative;
+    padding-left: 1rem;
 }
 
+.section-header::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 2px;
+}
+
+/* Premium Chat Messages */
 .chat-message {
-    padding: 1rem;
-    border-radius: 0.75rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.3s ease;
+}
+
+.chat-message:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
 }
 
 .user-message {
-    background-color: #dbeafe;
-    border-left: 4px solid #2563eb;
-    color: #1e40af;
-    font-weight: 500;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    margin-left: 2rem;
+    position: relative;
+}
+
+.user-message::before {
+    content: '👤';
+    position: absolute;
+    left: -2.5rem;
+    top: 1.5rem;
+    font-size: 1.2rem;
 }
 
 .assistant-message {
-    background-color: #f8fafc;
-    border-left: 4px solid #475569;
-    color: #334155;
-    border: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    color: #1e293b;
+    margin-right: 2rem;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    position: relative;
 }
 
+.assistant-message::before {
+    content: '🤖';
+    position: absolute;
+    right: -2.5rem;
+    top: 1.5rem;
+    font-size: 1.2rem;
+}
+
+/* Premium Suggestion Buttons */
 .suggestion-button {
-    margin: 0.25rem;
-    padding: 0.5rem 1rem;
-    background-color: #ffffff;
-    border: 2px solid #3b82f6;
-    border-radius: 0.5rem;
-    font-size: 0.875rem;
-    color: #1e40af;
+    margin: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    color: #475569;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .suggestion-button:hover {
-    background-color: #3b82f6;
-    color: #ffffff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-color: transparent;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
+/* Premium Stats Container */
 .stats-container {
-    background-color: #f1f5f9;
-    padding: 1rem;
-    border-radius: 0.75rem;
-    margin: 1rem 0;
-    border: 1px solid #cbd5e1;
-    color: #334155;
-    font-weight: 500;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin: 1.5rem 0;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
 }
 
-/* Improve general text contrast */
-.stMarkdown p {
-    color: #1f2937 !important;
-}
-
-.stInfo {
-    background-color: #eff6ff !important;
-    border: 1px solid #3b82f6 !important;
-    color: #1e40af !important;
-}
-
-.stSuccess {
-    background-color: #f0fdf4 !important;
-    border: 1px solid #22c55e !important;
-    color: #166534 !important;
-}
-
-.stError {
-    background-color: #fef2f2 !important;
-    border: 1px solid #ef4444 !important;
-    color: #dc2626 !important;
-}
-
-.stWarning {
-    background-color: #fffbeb !important;
-    border: 1px solid #f59e0b !important;
-    color: #d97706 !important;
-}
-
-/* Sidebar improvements */
+/* Premium Sidebar */
 .css-1d391kg {
-    background-color: #f8fafc;
+    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    border-right: 1px solid rgba(102, 126, 234, 0.1);
 }
 
-/* Button improvements */
+/* Premium Buttons */
 .stButton > button {
-    background-color: #3b82f6;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    transition: all 0.2s;
+    border-radius: 12px;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    font-size: 0.9rem;
 }
 
 .stButton > button:hover {
-    background-color: #2563eb;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+/* Premium File Uploader */
+.stFileUploader > div {
+    border: 2px dashed #cbd5e1;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    transition: all 0.3s ease;
+}
+
+.stFileUploader > div:hover {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+/* Premium Status Messages */
+.stInfo {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%) !important;
+    border: 1px solid #3b82f6 !important;
+    color: #1e40af !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1) !important;
+}
+
+.stSuccess {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%) !important;
+    border: 1px solid #22c55e !important;
+    color: #166534 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1) !important;
+}
+
+.stError {
+    background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%) !important;
+    border: 1px solid #ef4444 !important;
+    color: #dc2626 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1) !important;
+}
+
+.stWarning {
+    background: linear-gradient(135deg, #fffbeb 0%, #fed7aa 100%) !important;
+    border: 1px solid #f59e0b !important;
+    color: #d97706 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1) !important;
+}
+
+/* Premium Chat Input */
+.stChatInput > div {
+    border-radius: 16px !important;
+    border: 2px solid #e2e8f0 !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05) !important;
+}
+
+.stChatInput > div:focus-within {
+    border-color: #667eea !important;
+    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.15) !important;
+}
+
+/* Premium Text */
+.stMarkdown p {
+    color: #1e293b !important;
+    line-height: 1.6 !important;
+}
+
+/* Premium Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+}
+
+/* Premium Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.chat-message {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+/* Premium Loading Spinner */
+.stSpinner > div {
+    border-top-color: #667eea !important;
+}
+
+/* Premium Metrics */
+.metric-container {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    padding: 1.5rem;
+    border-radius: 16px;
+    margin: 1rem 0;
+    border: 1px solid rgba(102, 126, 234, 0.1);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #667eea;
+    margin-bottom: 0.5rem;
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    color: #64748b;
+    font-weight: 500;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -381,13 +556,13 @@ def main():
     """Main Streamlit application."""
     initialize_session_state()
 
-    # Header
+    # Premium Header
     st.markdown('<h1 class="main-header">⚖️ Legal Assistant Agent</h1>', unsafe_allow_html=True)
-    st.markdown("**Advanced RAG System with Agent Reasoning for Legal Document Analysis**")
+    st.markdown('<p class="main-subtitle">Advanced ReAct Agentic AI System for Intelligent Legal Document Analysis</p>', unsafe_allow_html=True)
 
-    # Sidebar
+    # Premium Sidebar
     with st.sidebar:
-        st.markdown("### 📋 Document Management")
+        st.markdown("### 🚀 Document Management")
 
         # API Key status
         google_api_key = os.getenv("GOOGLE_API_KEY")
@@ -442,7 +617,7 @@ def main():
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        st.markdown('<h2 class="section-header">💬 Chat with Your Document</h2>', unsafe_allow_html=True)
+        st.markdown('<h2 class="section-header">🤖 Intelligent Document Analysis</h2>', unsafe_allow_html=True)
 
         # Display conversation
         display_conversation_history()
@@ -452,7 +627,7 @@ def main():
             st.info("Please upload a document and ensure API key is configured to start chatting.")
 
     with col2:
-        st.markdown('<h2 class="section-header">💡 Suggested Questions</h2>', unsafe_allow_html=True)
+        st.markdown('<h2 class="section-header">🎯 Smart Suggestions</h2>', unsafe_allow_html=True)
 
         if st.session_state.document_processed and st.session_state.agent:
             # Get follow-up suggestions
@@ -481,18 +656,18 @@ def main():
         st.markdown("---")
 
         # Example queries section
-        st.markdown("### 📚 Example Queries")
+        st.markdown("### 🧠 ReAct Agent Capabilities")
         example_queries = [
-            "📋 **Clause Analysis:**",
+            "🧠 **Intelligent Analysis:**",
             "- What is the termination clause?",
             "- Explain the liability terms",
             "- What are the payment terms?",
             "",
-            "🔍 **Comparison:**",
+            "🔍 **Advanced Reasoning:**",
             "- Compare notice vs termination",
             "- What's the difference between...",
             "",
-            "📖 **Simplification:**",
+            "🎯 **Contextual Understanding:**",
             "- Explain this in simple terms",
             "- What are my obligations?",
             "- What risks should I know about?"
@@ -503,20 +678,21 @@ def main():
 
         # About section
         st.markdown("---")
-        st.markdown("### ℹ️ About")
+        st.markdown("### ⚡ Agentic AI Technology")
         st.markdown("""
-        This Legal Assistant Agent uses:
-        - **LangGraph** for agent reasoning (ReAct pattern)
-        - **FAISS** for document retrieval
-        - **Gemini API** for summarization
-        - **Memory** for conversation context
+        **Advanced ReAct Agent Architecture:**
+        - **🧠 LangGraph** - Intelligent reasoning & decision making
+        - **🔍 FAISS** - Semantic document retrieval
+        - **🤖 Gemini API** - Advanced language understanding
+        - **💾 Memory** - Contextual conversation awareness
+        - **🎯 Multi-Tool** - Orchestrated AI capabilities
 
-        Perfect for students learning legal documents!
+        **Beyond Simple RAG - True Agentic Intelligence!**
         """)
 
     # Chat input - must be outside columns
     if st.session_state.document_processed and st.session_state.agent:
-        user_query = st.chat_input("Ask me about your legal document...")
+        user_query = st.chat_input("🤖 Ask your intelligent legal assistant...")
         if user_query:
             handle_user_query(user_query)
 
