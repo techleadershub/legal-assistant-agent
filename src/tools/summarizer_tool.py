@@ -45,12 +45,12 @@ class SummarizerTool(BaseTool):
     """
     args_schema: type = SummarizerInput
 
-    def __init__(self, api_key: str, model: str = "gemini-2.0-flash-exp"):
+    def __init__(self, api_key: str, model: str = "gemini-1.5-flash"):
         """Initialize the summarizer tool.
 
         Args:
             api_key: Google API key for Gemini
-            model: Gemini model to use (default: gemini-2.0-flash-exp)
+            model: Gemini model to use (default: gemini-1.5-flash)
         """
         super().__init__()
         object.__setattr__(self, 'api_key', api_key)
@@ -75,7 +75,10 @@ class SummarizerTool(BaseTool):
         try:
             prompt = self._create_prompt(text, style, focus)
             response = self.llm.invoke(prompt)
-            return response.content
+            
+            # Clean and format the response
+            cleaned_response = self._clean_response(response.content)
+            return cleaned_response
 
         except Exception as e:
             return f"Error summarizing text: {str(e)}"
@@ -97,6 +100,8 @@ class SummarizerTool(BaseTool):
         """
         base_prompt = f"""You are a legal expert helping students and non-lawyers understand legal documents.
 
+CRITICAL: Generate clean, properly formatted text with correct spacing between all words. Do NOT generate text with missing spaces between words.
+
 Legal Text to Analyze:
 {text}
 
@@ -110,15 +115,22 @@ Please provide a student-friendly explanation that:
 3. Uses examples or analogies when helpful
 4. Highlights key points that would matter to someone without legal training
 5. Explains the practical implications
+6. Uses proper markdown formatting with clear sections
 
 Format your response as:
-**What this means in plain English:**
-[Your simplified explanation]
+[Your simplified explanation directly, without any "What this means in plain English" prefix]
 
 **Key points to remember:**
 - [Important point 1]
 - [Important point 2]
 - [etc.]
+
+Make sure to:
+- Use proper spacing between sentences
+- Format currency amounts clearly (e.g., $150,000)
+- Use bullet points for lists
+- Keep paragraphs short and readable
+- Avoid run-on sentences
 """
 
         elif style == "executive":
@@ -177,6 +189,28 @@ Focus on making it understandable for a general audience.
 
         return base_prompt + style_instruction + focus_instruction
 
+    def _clean_response(self, response: str) -> str:
+        """Clean and format the LLM response."""
+        if not response:
+            return response
+            
+        import re
+        
+        # Remove unwanted prefixes
+        response = re.sub(r'^What this means in plain English:\s*', '', response, flags=re.IGNORECASE)
+        response = re.sub(r'^In plain English:\s*', '', response, flags=re.IGNORECASE)
+        
+        # Basic text cleaning (stable model shouldn't need aggressive fixes)
+        response = re.sub(r'([.!?])([A-Z])', r'\1 \2', response)  # Fix missing spaces after punctuation
+        response = re.sub(r'([,])([A-Z])', r'\1 \2', response)    # Fix missing spaces after commas
+        response = re.sub(r'(\d+)([A-Z])', r'\1 \2', response)    # Fix missing spaces after numbers
+        
+        # Fix multiple spaces but preserve line breaks
+        response = re.sub(r'[ \t]+', ' ', response)
+        response = re.sub(r'\n\s*\n', '\n\n', response)
+        
+        return response.strip()
+
     def compare_clauses(self, clause1: str, clause2: str, clause_types: str) -> str:
         """Compare two clauses and highlight differences.
 
@@ -221,7 +255,8 @@ Format your response as:
 
         try:
             response = self.llm.invoke(prompt)
-            return response.content
+            cleaned_response = self._clean_response(response.content)
+            return cleaned_response
         except Exception as e:
             return f"Error comparing clauses: {str(e)}"
 
@@ -261,7 +296,8 @@ Use simple language that a student would understand.
 
         try:
             response = self.llm.invoke(prompt)
-            return response.content
+            cleaned_response = self._clean_response(response.content)
+            return cleaned_response
         except Exception as e:
             return f"Error extracting obligations: {str(e)}"
 
@@ -300,6 +336,7 @@ Use everyday language that clearly explains what could go wrong and why it matte
 
         try:
             response = self.llm.invoke(prompt)
-            return response.content
+            cleaned_response = self._clean_response(response.content)
+            return cleaned_response
         except Exception as e:
             return f"Error identifying risks: {str(e)}"

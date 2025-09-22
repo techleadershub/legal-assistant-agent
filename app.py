@@ -446,9 +446,18 @@ def process_document(uploaded_file):
 
             st.session_state.document_processed = True
             st.session_state.current_document = uploaded_file.name
+            
+            # Clear conversation history for new document
+            st.session_state.conversation_history = []
+            if st.session_state.agent:
+                st.session_state.agent.clear_conversation()
 
             st.success(f"✅ Successfully processed {uploaded_file.name}")
             st.info(f"📊 Created {len(enhanced_docs)} document chunks for analysis")
+            st.info("🔄 Conversation history cleared for new document")
+            
+            # Rerun to update UI immediately
+            st.rerun()
 
             return True
 
@@ -474,9 +483,18 @@ def load_sample_document():
 
             st.session_state.document_processed = True
             st.session_state.current_document = "Sample Professional Services Agreement"
+            
+            # Clear conversation history for new document
+            st.session_state.conversation_history = []
+            if st.session_state.agent:
+                st.session_state.agent.clear_conversation()
 
             st.success("✅ Sample contract loaded successfully!")
             st.info(f"📊 Created {len(enhanced_docs)} document chunks for analysis")
+            st.info("🔄 Conversation history cleared for new document")
+            
+            # Rerun to update UI immediately
+            st.rerun()
 
             return True
 
@@ -584,7 +602,7 @@ def main():
             help="Upload a legal contract or document for analysis"
         )
 
-        if uploaded_file and uploaded_file != st.session_state.current_document:
+        if uploaded_file and uploaded_file.name != st.session_state.current_document:
             if st.button("📤 Process Document", type="primary"):
                 process_document(uploaded_file)
 

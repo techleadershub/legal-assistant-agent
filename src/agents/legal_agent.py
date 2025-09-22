@@ -34,14 +34,14 @@ class LegalAssistantAgent:
         self,
         google_api_key: str,
         vector_store_manager: VectorStoreManager,
-        gemini_model: str = "gemini-2.0-flash-exp"
+        gemini_model: str = "gemini-1.5-flash"
     ):
         """Initialize the Legal Assistant Agent.
 
         Args:
             google_api_key: Google API key for Gemini
             vector_store_manager: Vector store manager instance
-            gemini_model: Gemini model to use (default: gemini-2.0-flash-exp)
+            gemini_model: Gemini model to use (default: gemini-1.5-flash)
         """
         self.google_api_key = google_api_key
         self.vector_store_manager = vector_store_manager
@@ -107,10 +107,26 @@ Conversation Context:
 
 Current User Query: "{user_query}"
 
-Based on the query, determine what action you need to take:
-1. "retrieve" - if the user is asking about specific clauses, document content, or needs information from the document
+Based on the query and conversation context, determine what action you need to take:
+1. "retrieve" - if the user is asking about specific clauses, document content, or needs NEW information from the document
 2. "summarize" - if you already have content that needs to be simplified or explained
-3. "respond" - if this is a general question that doesn't require document retrieval
+3. "respond" - if this is a follow-up question that can be answered using conversation context, or a general question
+
+IMPORTANT: 
+- If this is a follow-up question that can be answered using the conversation context, choose "respond"
+- If the user is asking for clarification, examples, or building on previous answers, choose "respond"
+- If the user is asking about something already discussed in the conversation, choose "respond"
+- If the user is asking "What are the key risks" or "notice period" and we have context, choose "respond"
+
+Examples of when to choose "respond":
+- "Can you explain this in simpler terms?" (follow-up)
+- "What are the key risks?" (follow-up if we have context)
+- "notice period" (follow-up if we have context)
+- "What about..." (follow-up)
+
+Examples of when to choose "retrieve":
+- First time asking about a specific clause
+- Asking about new topics not in conversation context
 
 Consider the conversation context to provide better continuity.
 
@@ -237,24 +253,54 @@ Respond with just one word: retrieve, summarize, or respond"""
             # Generate a direct response
             response_prompt = f"""You are a helpful Legal Assistant Agent for students.
 
+CRITICAL: Generate clean, properly formatted text with correct spacing between all words. Do NOT generate text with missing spaces between words.
+
 Conversation Context:
 {conversation_context}
 
 User Query: "{user_query}"
 
-Please provide a helpful response. If this is a general legal question, provide educational information.
-If the user is asking about document content but no document has been uploaded, let them know they need to upload a document first.
+Based on the conversation context and the user's query, provide a helpful response. 
+- If this is a follow-up question, build upon the previous conversation
+- If this is a general legal question, provide educational information
+- If the user is asking about document content, use the conversation context to provide relevant information
+- Always maintain conversation continuity and context
+- Provide complete, substantive answers - don't just say "What this means in plain English:" without explaining
+
+IMPORTANT: Give a complete answer. Don't just start with "What this means in plain English:" and then stop. Provide the actual explanation.
 
 Keep your response friendly, educational, and appropriate for students learning about legal documents."""
 
             try:
                 response = self.llm.invoke([HumanMessage(content=response_prompt)])
-                final_response = response.content
+                final_response = self._clean_response(response.content)
             except Exception as e:
                 final_response = f"I apologize, but I encountered an error: {str(e)}"
 
         state["final_response"] = final_response
         return state
+
+    def _clean_response(self, response: str) -> str:
+        """Clean and format the LLM response."""
+        if not response:
+            return response
+            
+        import re
+        
+        # Remove unwanted prefixes
+        response = re.sub(r'^What this means in plain English:\s*', '', response, flags=re.IGNORECASE)
+        response = re.sub(r'^In plain English:\s*', '', response, flags=re.IGNORECASE)
+        
+        # Basic text cleaning (stable model shouldn't need aggressive fixes)
+        response = re.sub(r'([.!?])([A-Z])', r'\1 \2', response)  # Fix missing spaces after punctuation
+        response = re.sub(r'([,])([A-Z])', r'\1 \2', response)    # Fix missing spaces after commas
+        response = re.sub(r'(\d+)([A-Z])', r'\1 \2', response)    # Fix missing spaces after numbers
+        
+        # Fix multiple spaces but preserve line breaks
+        response = re.sub(r'[ \t]+', ' ', response)
+        response = re.sub(r'\n\s*\n', '\n\n', response)
+        
+        return response.strip()
 
     def process_query(self, user_query: str) -> str:
         """Process a user query and return a response.
